@@ -1,4 +1,5 @@
 from random import shuffle
+from sklearn import neighbors, datasets
 
 #atributos de teste
 attributes = [
@@ -21,7 +22,10 @@ for line in f:
     #faz split dos parametros
     split_line = line.split(',')
     #adiciona a um dicionario
-    items.append({'buying': split_line[0], 'maint': split_line[1], 'doors': split_line[2], 'persons': split_line[3], 'lug_boot': split_line[4], 'safety': split_line[5]})
+    items.append({'buying': split_line[0], 'maint': split_line[1], 'doors': split_line[2], 'persons': split_line[3], 'lug_boot': split_line[4], 'safety': split_line[5], 'original_classification': split_line[6]})
+
+f.close()
+
 #randomiza a lista
 shuffle(items)
 #ponto em que se deve dividir
@@ -34,6 +38,8 @@ classification_set = items[middle_point:]
 print(items)
 print(training_set)
 print(classification_set)
+
+#clf = neighbors.KNeighborsClassifier(training_set)
 
 
 
