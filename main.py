@@ -1,6 +1,7 @@
 from random import shuffle
 from sklearn import neighbors, datasets
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.neural_network import MLPCLassifier
 
 #atributos de teste
 attributes = [
@@ -43,8 +44,6 @@ def getClassifications(rawItems)
     return items
     
 
-
-
 #randomiza a lista
 shuffle(items)
 #ponto em que se deve dividir
@@ -66,15 +65,7 @@ clf = neighbors.KNeighborsClassifier()
 clf.fit(trainingXVectorizer.fit_transform(getItems(training_set), trainingYVectorizer(getClassifications(training_set))
 print(clf.predict(classificationYVectorizer.fit_transform(classification_set)))
 
-
-
-
-
-
-
-
-
-
-
-
+mlp = MLPCLassifier(hidden_layer_sizes=5)
+mlp.fit(trainingXVectorizer.fit_transform(getItems(training_set), trainingYVectorizer(getClassifications(training_set)) 
+print(mlp.predict(classificationYVectorizer.fit_transform(classification_set)))
 
