@@ -1,7 +1,9 @@
 from random import shuffle
+
+import copy
 from sklearn import neighbors, datasets
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.neural_network import MLPCLassifier
+from sklearn.neural_network import MLPClassifier
 
 #atributos de teste
 attributes = [
@@ -31,17 +33,17 @@ for line in f:
 f.close()
 
 def getItems(rawItems):
-    items = rawItems.copy()
+    items = copy.deepcopy(rawItems)
     for item in items:
-        items.pop('original_classification')
+        item.pop('original_classification')
     return items
 
-def getClassifications(rawItems)
-    items = rawItems.copy()
-    for k in rawItems.keys():
-        if(k != 'original_classification'):
-            del items[k]
-    return items
+def getClassifications(rawItems):
+    items = copy.deepcopy(rawItems)
+    values = []
+    for item in items:
+        values.append({'original_classification':(item.pop('original_classification'))})
+    return values
     
 
 #randomiza a lista
@@ -57,15 +59,21 @@ print(items)
 print(training_set)
 print(classification_set)
 
-trainingXVectorizer = DictVectorizer()
-trainingYVectorizer = DictVectorizer()
-classificationYVectorizer = DictVectorizer()
+
+trainingXVectorizer = DictVectorizer(sparse=False)
+trainingYVectorizer = DictVectorizer(sparse=False)
+classificationXVectorizer = DictVectorizer(sparse=False)
 
 clf = neighbors.KNeighborsClassifier()
-clf.fit(trainingXVectorizer.fit_transform(getItems(training_set), trainingYVectorizer(getClassifications(training_set))
-print(clf.predict(classificationYVectorizer.fit_transform(classification_set)))
+clf.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+knnresult = (clf.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+print(trainingYVectorizer.inverse_transform(knnresult))
 
-mlp = MLPCLassifier(hidden_layer_sizes=5)
-mlp.fit(trainingXVectorizer.fit_transform(getItems(training_set), trainingYVectorizer(getClassifications(training_set)) 
-print(mlp.predict(classificationYVectorizer.fit_transform(classification_set)))
+mlp = MLPClassifier()
+mlp.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+mlpresult = (mlp.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+print(trainingYVectorizer.inverse_transform(mlpresult))
+print(getClassifications(classification_set))
+
+
 
