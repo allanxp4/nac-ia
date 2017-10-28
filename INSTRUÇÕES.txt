@@ -1,0 +1,5 @@
+É necessário o Python 3 (3.5+) com as bibliotecas numpy, scipy, sklearn, matplotlib.
+No linux é possível achar todas pelo gerenciador de pacotes.
+No windows, é possível achar o sklearn e o matplotlib no pip. O numpy e o scipy podem ser achados aqui:
+http://www.lfd.uci.edu/~gohlke/pythonlibs/
+
