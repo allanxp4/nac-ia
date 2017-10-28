@@ -4,16 +4,19 @@ import copy
 from sklearn import neighbors, datasets
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.neural_network import MLPClassifier
-import pylab as pl
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
 
 #atributos de teste
+#http://archive.ics.uci.edu/ml/datasets/Car+Evaluation
 attributes = [
     {'buying': ['vhigh', 'high', 'med', 'low']},
     {'maint': ['vhigh', 'high', 'med', 'low']},
     {'doors': ['2', '3', '4', '5more']},
     {'persons': ['2', '4', 'more']},
     {'lug_boot': ['small', 'med', 'big']},
-    {'safety': ['low', 'med', 'high']}
+    {'safety': ['low', 'med', 'high']},
+    {'classification': ['unacc', 'acc', 'good', 'v_good']}
 ]
 
 #abre o arquivo
@@ -133,12 +136,12 @@ k3difference = (set(getArrayOfDict(k3prettyresult)) & set(getKeyValueString(getC
 k5difference = (set(getArrayOfDict(k5prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
 
 #checa a precisão
-mlp1precision = len(mlp1difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
-mlp2precision = len(mlp2difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
-mlp3precision = len(mlp3difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
-k1precision = len(k1difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
-k3precision = len(k3difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
-k5precision = len(k5difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+mlp1precision = len(mlp1difference) / len(classification_set)*100
+mlp2precision = len(mlp2difference) / len(classification_set)*100
+mlp3precision = len(mlp3difference) / len(classification_set)*100
+k1precision = len(k1difference) / len(classification_set)*100
+k3precision = len(k3difference) / len(classification_set)*100
+k5precision = len(k5difference) / len(classification_set)*100
 
 print(mlp1precision)
 print(mlp2precision)
@@ -147,7 +150,17 @@ print(k1precision)
 print(k3precision)
 print(k5precision)
 
+objects = ("mlp l=1", "mlp l=2", "mlp l=3", "knn k=1", "knn k=3", "knn k=5")
+y_pos = np.arange(len(objects))
+labels = [mlp1precision, mlp2precision, mlp3precision, k1precision, k3precision, k5precision]
 
+plt.bar(y_pos, labels, align='center', alpha=0.5)
+plt.xticks(y_pos, objects)
+plt.ylabel('Taxa de erro')
+plt.xlabel('Método usado')
+plt.title('Precisão de diferentes métodos com o dataset Car Evaluation')
+
+plt.show()
 #percebi que esse dataset não tem exatamente um nivel muito grande de variabilidade, então, não há uma differença muito grande de precisão dependendo
 #da lista que foi randomizada, mas, mostraram uma taxa de acerto bem alta.
 
