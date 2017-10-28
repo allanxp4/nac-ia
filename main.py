@@ -4,6 +4,7 @@ import copy
 from sklearn import neighbors, datasets
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.neural_network import MLPClassifier
+import pylab as pl
 
 #atributos de teste
 attributes = [
@@ -32,6 +33,7 @@ for line in f:
 
 f.close()
 
+#metodos helpers
 def getItems(rawItems):
     items = copy.deepcopy(rawItems)
     for item in items:
@@ -44,7 +46,25 @@ def getClassifications(rawItems):
     for item in items:
         values.append({'original_classification':(item.pop('original_classification'))})
     return values
-    
+
+def getKeyValueString(items):
+    results = []
+    for item in items:
+        for key,value in item.items():
+            results.append(key + "=" + value)
+    return results
+
+def getArrayOfDict(dictList):
+    results = []
+    for item in dictList:
+        for key, value in item.items():
+            results.append(key )
+    return results
+
+def getDifference(list1, list2):
+    for i in len(list1):
+        print(list1[i])
+
 
 #randomiza a lista
 shuffle(items)
@@ -59,21 +79,81 @@ print(items)
 print(training_set)
 print(classification_set)
 
-
+#vetoriza os dados
+#a normalização é apliada automaticamente por padrão
 trainingXVectorizer = DictVectorizer(sparse=False)
 trainingYVectorizer = DictVectorizer(sparse=False)
 classificationXVectorizer = DictVectorizer(sparse=False)
 
-clf = neighbors.KNeighborsClassifier()
-clf.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
-knnresult = (clf.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
-print(trainingYVectorizer.inverse_transform(knnresult))
+#resultados da lista de terinamento
+originalValues = getKeyValueString(getClassifications(classification_set))
 
-mlp = MLPClassifier()
+#knn k=1
+clf = neighbors.KNeighborsClassifier(n_neighbors=1)
+clf.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+k1result = (clf.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+k1prettyresult = (trainingYVectorizer.inverse_transform(k1result))
+
+#knn k=3
+clf = neighbors.KNeighborsClassifier(n_neighbors=3)
+clf.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+k3result = (clf.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+k3prettyresult = (trainingYVectorizer.inverse_transform(k3result))
+
+#knn k=5
+clf = neighbors.KNeighborsClassifier(n_neighbors=5)
+clf.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+k5result = (clf.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+k5prettyresult = (trainingYVectorizer.inverse_transform(k5result))
+
+#mlp camadas intermediarias = 1
+mlp = MLPClassifier(hidden_layer_sizes=1)
 mlp.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
-mlpresult = (mlp.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
-print(trainingYVectorizer.inverse_transform(mlpresult))
-print(getClassifications(classification_set))
+mlp1result = (mlp.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+mlp1prettyresult = (trainingYVectorizer.inverse_transform(mlp1result))
+
+#mlp camadas intermediarias = 2
+mlp = MLPClassifier(hidden_layer_sizes=2)
+mlp.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+mlp2result = (mlp.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+mlp2prettyresult = (trainingYVectorizer.inverse_transform(mlp2result))
+
+#mlp camadas intermediarias = 3
+mlp = MLPClassifier(hidden_layer_sizes=3)
+mlp.fit(trainingXVectorizer.fit_transform(getItems(training_set)), trainingYVectorizer.fit_transform(getClassifications(training_set)))
+mlp3result = (mlp.predict(classificationXVectorizer.fit_transform(getItems(classification_set))))
+mlp3prettyresult = (trainingYVectorizer.inverse_transform(mlp3result))
+
+#pega as diferenças entre o resultado esperado e o predito
+mlp1difference = (set(getArrayOfDict(mlp1prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
+mlp2difference = (set(getArrayOfDict(mlp2prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
+mlp3difference = (set(getArrayOfDict(mlp3prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
+k1difference = (set(getArrayOfDict(k1prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
+k3difference = (set(getArrayOfDict(k3prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
+k5difference = (set(getArrayOfDict(k5prettyresult)) & set(getKeyValueString(getClassifications(classification_set))))
+
+#checa a precisão
+mlp1precision = len(mlp1difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+mlp2precision = len(mlp2difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+mlp3precision = len(mlp3difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+k1precision = len(k1difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+k3precision = len(k3difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+k5precision = len(k5difference)*100 / len(getKeyValueString(getClassifications(classification_set)))
+
+print(mlp1precision)
+print(mlp2precision)
+print(mlp3precision)
+print(k1precision)
+print(k3precision)
+print(k5precision)
+
+
+#percebi que esse dataset não tem exatamente um nivel muito grande de variabilidade, então, não há uma differença muito grande de precisão dependendo
+#da lista que foi randomizada, mas, mostraram uma taxa de acerto bem alta.
+
+
+
+
 
 
 
